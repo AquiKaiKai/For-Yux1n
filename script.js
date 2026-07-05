@@ -62,9 +62,9 @@ var init = function () {
         var maxSize = Math.min(width, height);
         if (mobile) {
             heartSizes = [
-                [maxSize * 0.32, maxSize * 0.020],
-                [maxSize * 0.22, maxSize * 0.014],
-                [maxSize * 0.13, maxSize * 0.009]
+                [maxSize * 0.45, maxSize * 0.028],
+                [maxSize * 0.33, maxSize * 0.018],
+                [maxSize * 0.20, maxSize * 0.011]
             ];
         } else {
             heartSizes = [
@@ -94,10 +94,11 @@ var init = function () {
         setHeartSizes();
     });
 
+    var particleSize = mobile ? 2 : 1;
     var traceCount = mobile ? 10 : 45;
     var pointsOrigin = [];
     var i;
-    var dr = mobile ? 0.55 : 0.12;
+    var dr = mobile ? 0.45 : 0.12;
     for (i = 0; i < Math.PI * 2; i += dr)
         pointsOrigin.push(scaleAndTranslate(heartPosition(i), heartSizes[0][0], heartSizes[0][1], 0, 0));
     for (i = 0; i < Math.PI * 2; i += dr)
@@ -180,7 +181,7 @@ var init = function () {
             }
             ctx.fillStyle = u.f;
             for (k = 0; k < u.trace.length; k++) {
-                ctx.fillRect(u.trace[k].x, u.trace[k].y, 1, 1);
+                ctx.fillRect(u.trace[k].x, u.trace[k].y, particleSize, particleSize);
             }
         }
 
