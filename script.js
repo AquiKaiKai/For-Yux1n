@@ -28,14 +28,27 @@ var init = function () {
     started = true;
 
     var mobile = window.isDevice;
-    var koef = mobile ? 0.5 : 1;
+    var ratio = window.devicePixelRatio || 1;
     var canvas = document.getElementById('heart');
     var ctx = canvas.getContext('2d');
-    var width = canvas.width = koef * innerWidth;
-    var height = canvas.height = koef * innerHeight;
+
+    var resizeCanvas = function () {
+        var width = innerWidth;
+        var height = innerHeight;
+        canvas.style.width = width + 'px';
+        canvas.style.height = height + 'px';
+        canvas.width = width * ratio;
+        canvas.height = height * ratio;
+        ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+        ctx.fillStyle = "rgba(0,0,0,1)";
+        ctx.fillRect(0, 0, width, height);
+        return { width: width, height: height };
+    };
+
+    var dimensions = resizeCanvas();
+    var width = dimensions.width;
+    var height = dimensions.height;
     var rand = Math.random;
-    ctx.fillStyle = "rgba(0,0,0,1)";
-    ctx.fillRect(0, 0, width, height);
 
     var heartPosition = function (rad) {
         return [Math.pow(Math.sin(rad), 3),
@@ -48,10 +61,9 @@ var init = function () {
     };
 
     window.addEventListener('resize', function () {
-        width = canvas.width = koef * innerWidth;
-        height = canvas.height = koef * innerHeight;
-        ctx.fillStyle = "rgba(0,0,0,1)";
-        ctx.fillRect(0, 0, width, height);
+        var dimensions = resizeCanvas();
+        width = dimensions.width;
+        height = dimensions.height;
     });
 
     var traceCount = mobile ? 20 : 50;
