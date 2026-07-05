@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heart Animation Effect</title>
+
+    <style>
+      :root {
+        color-scheme: dark;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        overflow: hidden;
+        display: grid;
+        place-items: center;
+        background: radial-gradient(circle at top, #170b2c 0%, #050305 70%, #000000 100%);
+        font-family: "Inter", sans-serif;
+      }
+
+      canvas {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.2);
+        z-index: 0;
+      }
+
+      .loader-wrapper {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 180px;
+        height: 180px;
+        font-size: 1.2em;
+        font-weight: 300;
+        color: white;
+        border-radius: 50%;
+        background-color: transparent;
+        user-select: none;
+        cursor: pointer;
+        z-index: 1;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        backdrop-filter: blur(8px);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      }
+
+      @media (max-width: 768px) {
+        .loader-wrapper {
+          width: 140px;
+          height: 140px;
+          font-size: 0.95em;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .loader-wrapper {
+          width: 100px;
+          height: 100px;
+          font-size: 0.75em;
+        }
+      }
+
+      .loader-wrapper:hover {
+        transform: translate(-50%, -50%) translateY(-2px) scale(1.02);
+        box-shadow: 0 16px 40px rgba(120, 60, 255, 0.3);
+      }
+
+      @media (max-width: 768px) {
+        .loader-wrapper:hover {
+          transform: translate(-50%, -50%) scale(1.01);
+        }
+      }
+
+      @media (hover: none) {
+        .loader-wrapper:hover {
+          transform: translate(-50%, -50%);
+          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        }
+      }
+
+      .button {
+        position: fixed;
+        bottom: 5%;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 17px;
+        border-radius: 12px;
+        background: linear-gradient(180deg, rgb(56, 56, 56) 0%, rgb(36, 36, 36) 66%, rgb(41, 41, 41) 100%);
+        color: rgb(218, 218, 218);
+        border: none;
+        padding: 2px;
+        font-weight: 700;
+        cursor: pointer;
+        overflow: hidden;
+        z-index: 1;
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .button.show {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .button span {
+        border-radius: 10px;
+        padding: 0.8em 1.3em;
+        padding-right: 1.2em;
+        text-shadow: 0px 0px 20px #4b4b4b;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: inherit;
+        transition: all 0.3s;
+        background-color: rgb(29, 29, 29);
+        background-image: radial-gradient(at 95% 89%, rgb(15, 15, 15) 0px, transparent 50%), radial-gradient(at 0% 100%, rgb(17, 17, 17) 0px, transparent 50%), radial-gradient(at 0% 0%, rgb(29, 29, 29) 0px, transparent 50%);
+      }
+
+      .button:hover span {
+        background-color: rgb(26, 25, 25);
+      }
+
+      .button-overlay {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: repeating-conic-gradient(rgb(48, 47, 47) 0.0000001%, rgb(51, 51, 51) 0.000104%) 60% 60%/600% 600%;
+        filter: opacity(10%) contrast(105%);
+        -webkit-filter: opacity(10%) contrast(105%);
+      }
+
+      .button svg {
+        width: 15px;
+        height: 15px;
+      }
+
+      @keyframes rotate {
+        0% {
+          transform: translate(-50%, -50%) rotate(0deg);
+        }
+        100% {
+          transform: translate(-50%, -50%) rotate(360deg);
+        }
+      }
+
+      .loader-wrapper.is-started {
+        opacity: 0;
+        pointer-events: none;
+        transform: scale(0.95);
+      }
+
+      .loader {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        border-radius: 50%;
+        background-color: transparent;
+        animation: loader-rotate 2s linear infinite;
+        z-index: 0;
+      }
+
+      @keyframes loader-rotate {
+        0% {
+          transform: rotate(90deg);
+          box-shadow:
+            0 10px 20px 0 #fff inset,
+            0 20px 30px 0 #ad5fff inset,
+            0 60px 60px 0 #471eec inset;
+        }
+        50% {
+          transform: rotate(270deg);
+          box-shadow:
+            0 10px 20px 0 #fff inset,
+            0 20px 10px 0 #d60a47 inset,
+            0 40px 60px 0 #311e80 inset;
+        }
+        100% {
+          transform: rotate(450deg);
+          box-shadow:
+            0 10px 20px 0 #fff inset,
+            0 20px 30px 0 #ad5fff inset,
+            0 60px 60px 0 #471eec inset;
+        }
+      }
+
+      .loader-letter {
+        display: inline-block;
+        opacity: 0.4;
+        transform: translateY(0);
+        animation: loader-letter-anim 2s infinite;
+        z-index: 1;
+        border-radius: 50ch;
+        border: none;
+      }
+
+      .loader-letter:nth-child(1) { animation-delay: 0s; }
+      .loader-letter:nth-child(2) { animation-delay: 0.1s; }
+      .loader-letter:nth-child(3) { animation-delay: 0.2s; }
+      .loader-letter:nth-child(4) { animation-delay: 0.3s; }
+      .loader-letter:nth-child(5) { animation-delay: 0.4s; }
+      .loader-letter:nth-child(6) { animation-delay: 0.5s; }
+      .loader-letter:nth-child(7) { animation-delay: 0.6s; }
+      .loader-letter:nth-child(8) { animation-delay: 0.7s; }
+      .loader-letter:nth-child(9) { animation-delay: 0.8s; }
+      .loader-letter:nth-child(10) { animation-delay: 0.9s; }
+
+      @keyframes loader-letter-anim {
+        0%,
+        100% {
+          opacity: 0.4;
+          transform: translateY(0);
+        }
+        20% {
+          opacity: 1;
+          transform: scale(1.15);
+        }
+        40% {
+          opacity: 0.7;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="heart"></canvas>
+
+    <button id="start-heart" class="loader-wrapper" type="button" aria-label="Start the heart animation">
+      <span class="loader-letter">P</span>
+      <span class="loader-letter">l</span>
+      <span class="loader-letter">a</span>
+      <span class="loader-letter">y</span>
+      <span class="loader-letter"></span>
+      <span class="loader-letter">M</span>
+      <span class="loader-letter">e</span>
+      <div class="loader"></div>
+    </button>
+
+    <audio id="bg-music" loop preload="auto" style="display:none;">
+      <source src="Daniel Caesar - Always (Official Audio).mp3" type="audio/mpeg">
+    </audio>
+
+    <button id="playlist-btn" class="button">
+      <div class="button-overlay"></div>
+      <span>Playlist <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 53 58" height="58" width="53">
+<path stroke-width="9" stroke="currentColor" d="M44.25 36.3612L17.25 51.9497C11.5833 55.2213 4.5 51.1318 4.50001 44.5885L4.50001 13.4115C4.50001 6.86824 11.5833 2.77868 17.25 6.05033L44.25 21.6388C49.9167 24.9104 49.9167 33.0896 44.25 36.3612Z"></path>
+</svg></span>
+    </button>
+
+    <script src="script.js?v=5"></script>
+  </body>
+</html>
