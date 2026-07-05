@@ -36,6 +36,9 @@ var init = function () {
     var canvas = document.getElementById('heart');
     var ctx = canvas.getContext('2d');
     ctx.imageSmoothingEnabled = true;
+    if ('imageSmoothingQuality' in ctx) {
+        ctx.imageSmoothingQuality = 'high';
+    }
 
     var resizeCanvas = function () {
         var width = innerWidth;
@@ -57,9 +60,19 @@ var init = function () {
 
     var setHeartSizes = function () {
         var maxSize = Math.min(width, height);
-        heartSizes = mobile ?
-            [[maxSize * 0.42, maxSize * 0.026], [maxSize * 0.29, maxSize * 0.017], [maxSize * 0.17, maxSize * 0.010]] :
-            [[maxSize * 0.5, maxSize * 0.032], [maxSize * 0.35, maxSize * 0.021], [maxSize * 0.2, maxSize * 0.012]];
+        if (mobile) {
+            heartSizes = [
+                [maxSize * 0.32, maxSize * 0.020],
+                [maxSize * 0.22, maxSize * 0.014],
+                [maxSize * 0.13, maxSize * 0.009]
+            ];
+        } else {
+            heartSizes = [
+                [maxSize * 0.5, maxSize * 0.032],
+                [maxSize * 0.35, maxSize * 0.021],
+                [maxSize * 0.2, maxSize * 0.012]
+            ];
+        }
     };
 
     setHeartSizes();
@@ -81,10 +94,10 @@ var init = function () {
         setHeartSizes();
     });
 
-    var traceCount = mobile ? 14 : 45;
+    var traceCount = mobile ? 10 : 45;
     var pointsOrigin = [];
     var i;
-    var dr = mobile ? 0.45 : 0.12;
+    var dr = mobile ? 0.55 : 0.12;
     for (i = 0; i < Math.PI * 2; i += dr)
         pointsOrigin.push(scaleAndTranslate(heartPosition(i), heartSizes[0][0], heartSizes[0][1], 0, 0));
     for (i = 0; i < Math.PI * 2; i += dr)
