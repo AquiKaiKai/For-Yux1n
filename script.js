@@ -29,26 +29,40 @@ var init = function () {
 
     var mobile = window.isDevice;
     var ratio = window.devicePixelRatio || 1;
+    if (mobile) {
+        ratio = Math.min(ratio, 2);
+    }
+
     var canvas = document.getElementById('heart');
     var ctx = canvas.getContext('2d');
+    ctx.imageSmoothingEnabled = true;
 
     var resizeCanvas = function () {
         var width = innerWidth;
         var height = innerHeight;
         canvas.style.width = width + 'px';
         canvas.style.height = height + 'px';
-        canvas.width = width * ratio;
-        canvas.height = height * ratio;
+        canvas.width = Math.round(width * ratio);
+        canvas.height = Math.round(height * ratio);
         ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-        ctx.fillStyle = "rgba(0,0,0,1)";
-        ctx.fillRect(0, 0, width, height);
+        ctx.clearRect(0, 0, width, height);
         return { width: width, height: height };
     };
 
+    var heartSizes = [];
     var dimensions = resizeCanvas();
     var width = dimensions.width;
     var height = dimensions.height;
     var rand = Math.random;
+
+    var setHeartSizes = function () {
+        var maxSize = Math.min(width, height);
+        heartSizes = mobile ?
+            [[maxSize * 0.42, maxSize * 0.026], [maxSize * 0.29, maxSize * 0.017], [maxSize * 0.17, maxSize * 0.010]] :
+            [[maxSize * 0.5, maxSize * 0.032], [maxSize * 0.35, maxSize * 0.021], [maxSize * 0.2, maxSize * 0.012]];
+    };
+
+    setHeartSizes();
 
     var heartPosition = function (rad) {
         return [Math.pow(Math.sin(rad), 3),
@@ -64,18 +78,19 @@ var init = function () {
         var dimensions = resizeCanvas();
         width = dimensions.width;
         height = dimensions.height;
+        setHeartSizes();
     });
 
-    var traceCount = mobile ? 20 : 50;
+    var traceCount = mobile ? 14 : 45;
     var pointsOrigin = [];
     var i;
-    var dr = mobile ? 0.3 : 0.1;
+    var dr = mobile ? 0.45 : 0.12;
     for (i = 0; i < Math.PI * 2; i += dr)
-    pointsOrigin.push(scaleAndTranslate(heartPosition(i), 210, 13, 0, 0));
+        pointsOrigin.push(scaleAndTranslate(heartPosition(i), heartSizes[0][0], heartSizes[0][1], 0, 0));
     for (i = 0; i < Math.PI * 2; i += dr)
-    pointsOrigin.push(scaleAndTranslate(heartPosition(i), 150, 9, 0, 0));
+        pointsOrigin.push(scaleAndTranslate(heartPosition(i), heartSizes[1][0], heartSizes[1][1], 0, 0));
     for (i = 0; i < Math.PI * 2; i += dr)
-    pointsOrigin.push(scaleAndTranslate(heartPosition(i), 90, 5, 0, 0));
+        pointsOrigin.push(scaleAndTranslate(heartPosition(i), heartSizes[2][0], heartSizes[2][1], 0, 0));
     var heartPointsCount = pointsOrigin.length;
 
     var targetPoints = [];
@@ -115,7 +130,7 @@ var init = function () {
         var n = -Math.cos(time);
         pulse((1 + n) * .5, (1 + n) * .5);
         time += ((Math.sin(time)) < 0 ? 9 : (n > 0.8) ? .2 : 1) * config.timeDelta;
-        ctx.fillStyle = "rgba(0,0,0,.1)";
+        ctx.fillStyle = "rgba(0,0,0,.08)";
         ctx.fillRect(0, 0, width, height);
         for (i = e.length; i--;) {
             var u = e[i];
