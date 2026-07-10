@@ -100,38 +100,12 @@ var init = function () {
     var heartPointsCount = pointsOrigin.length;
 
     var targetPoints = [];
-    var outlineSize = 2;
-    var outlineColor = "rgba(255, 160, 255, 0.15)";
     var pulse = function (kx, ky) {
         for (i = 0; i < pointsOrigin.length; i++) {
             targetPoints[i] = [];
             targetPoints[i][0] = kx * pointsOrigin[i][0] + width / 2;
             targetPoints[i][1] = ky * pointsOrigin[i][1] + height / 2;
         }
-    };
-
-    var drawHeartOutline = function () {
-        ctx.save();
-        ctx.strokeStyle = outlineColor;
-        ctx.lineWidth = outlineSize;
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
-        ctx.shadowColor = "rgba(255, 160, 255, 0.1)";
-        ctx.shadowBlur = 8;
-        ctx.shadowOffsetX = 0;
-        ctx.shadowOffsetY = 0;
-        ctx.beginPath();
-        for (i = 0; i < targetPoints.length; i++) {
-            var p = targetPoints[i];
-            if (i === 0) {
-                ctx.moveTo(p[0], p[1]);
-            } else {
-                ctx.lineTo(p[0], p[1]);
-            }
-        }
-        ctx.closePath();
-        ctx.stroke();
-        ctx.restore();
     };
 
     var e = [];
@@ -164,7 +138,6 @@ var init = function () {
         time += ((Math.sin(time)) < 0 ? 9 : (n > 0.8) ? .2 : 1) * config.timeDelta;
         ctx.fillStyle = "rgba(0,0,0,.08)";
         ctx.fillRect(0, 0, width, height);
-        drawHeartOutline();
         for (i = e.length; i--;) {
             var u = e[i];
             var q = targetPoints[u.q];
