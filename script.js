@@ -1,4 +1,4 @@
- 
+
 window.requestAnimationFrame =
 window.__requestAnimationFrame ||
     window.requestAnimationFrame ||
@@ -29,9 +29,8 @@ var init = function () {
 
     var mobile = window.isDevice;
     var ratio = window.devicePixelRatio || 1;
-    if (mobile) {
-        ratio = Math.min(ratio, 2);
-    }
+    // Unified resolution: use consistent high DPI scaling for both mobile and desktop
+    ratio = Math.max(ratio, 1.5);
 
     var canvas = document.getElementById('heart');
     var ctx = canvas.getContext('2d');
@@ -60,19 +59,12 @@ var init = function () {
 
     var setHeartSizes = function () {
         var maxSize = Math.min(width, height);
-        if (mobile) {
-            heartSizes = [
-                [maxSize * 0.45, maxSize * 0.028],
-                [maxSize * 0.33, maxSize * 0.018],
-                [maxSize * 0.20, maxSize * 0.011]
-            ];
-        } else {
-            heartSizes = [
-                [maxSize * 0.5, maxSize * 0.032],
-                [maxSize * 0.35, maxSize * 0.021],
-                [maxSize * 0.2, maxSize * 0.012]
-            ];
-        }
+        // Unified sizes for both mobile and desktop
+        heartSizes = [
+            [maxSize * 0.5, maxSize * 0.032],
+            [maxSize * 0.35, maxSize * 0.021],
+            [maxSize * 0.2, maxSize * 0.012]
+        ];
     };
 
     setHeartSizes();
@@ -94,11 +86,11 @@ var init = function () {
         setHeartSizes();
     });
 
-    var particleSize = mobile ? 2 : 1;
-    var traceCount = mobile ? 10 : 45;
+    var particleSize = 1.5;
+    var traceCount = 45;
     var pointsOrigin = [];
     var i;
-    var dr = mobile ? 0.45 : 0.12;
+    var dr = 0.12;
     for (i = 0; i < Math.PI * 2; i += dr)
         pointsOrigin.push(scaleAndTranslate(heartPosition(i), heartSizes[0][0], heartSizes[0][1], 0, 0));
     for (i = 0; i < Math.PI * 2; i += dr)
@@ -108,8 +100,8 @@ var init = function () {
     var heartPointsCount = pointsOrigin.length;
 
     var targetPoints = [];
-    var outlineSize = mobile ? 4 : 2;
-    var outlineColor = mobile ? "rgba(255, 160, 255, 0.3)" : "rgba(255, 160, 255, 0.2)";
+    var outlineSize = 2;
+    var outlineColor = "rgba(255, 160, 255, 0.15)";
     var pulse = function (kx, ky) {
         for (i = 0; i < pointsOrigin.length; i++) {
             targetPoints[i] = [];
@@ -122,8 +114,12 @@ var init = function () {
         ctx.save();
         ctx.strokeStyle = outlineColor;
         ctx.lineWidth = outlineSize;
-        ctx.shadowColor = outlineColor;
-        ctx.shadowBlur = outlineSize * 2;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.shadowColor = "rgba(255, 160, 255, 0.1)";
+        ctx.shadowBlur = 8;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 0;
         ctx.beginPath();
         for (i = 0; i < targetPoints.length; i++) {
             var p = targetPoints[i];
@@ -244,4 +240,3 @@ if (startButton) {
 } else {
     startHeart();
 }
-
